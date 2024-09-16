@@ -1,2 +1,15 @@
-package com.projects.spring.projectmanager.response;public class AuthResponse {
+package com.projects.spring.projectmanager.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AuthResponse {
+
+    private String jwt;
+
+    private String message;
 }
