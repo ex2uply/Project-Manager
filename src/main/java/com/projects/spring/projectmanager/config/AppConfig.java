@@ -2,14 +2,12 @@ package com.projects.spring.projectmanager.config;
 
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,13 +29,13 @@ public class AppConfig {
                             .anyRequest().permitAll())
                     .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                     .csrf(AbstractHttpConfigurer::disable)
-                    .cors(cors->cors.configurationSource(corsConfigrationSource()));     ///cors: cross origin resource sharing
+                    .cors(cors->cors.configurationSource(corsConfigurationSource()));     ///cors: cross-origin resource sharing
 
 
             return http.build();
     }
 
-    private CorsConfigurationSource corsConfigrationSource() {
+    private CorsConfigurationSource corsConfigurationSource() {
         return new CorsConfigurationSource() {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {

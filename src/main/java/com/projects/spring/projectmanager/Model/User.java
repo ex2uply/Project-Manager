@@ -27,5 +27,5 @@ public class User {
 
 
 
-    private int projectSize;         //tract the no. of project user has created;
+    private int projectSize;         //track the no. of project user has created;
 }
