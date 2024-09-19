@@ -1,11 +1,13 @@
 package com.projects.spring.projectmanager.controller;
 
+import com.projects.spring.projectmanager.Model.Subscription;
 import com.projects.spring.projectmanager.Model.User;
 import com.projects.spring.projectmanager.config.JWTProvider;
 import com.projects.spring.projectmanager.repository.UserRepo;
 import com.projects.spring.projectmanager.request.LoginRequest;
 import com.projects.spring.projectmanager.response.AuthResponse;
 import com.projects.spring.projectmanager.service.CustomUserDetailsService;
+import com.projects.spring.projectmanager.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +31,14 @@ public class AuthController {
 
     private final CustomUserDetailsService userDetailsService;
 
-    public AuthController(UserRepo userRepo, PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) {
+
+    private  final SubscriptionService subscriptionService;
+
+    public AuthController(UserRepo userRepo, PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService, SubscriptionService subscriptionService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
+        this.subscriptionService = subscriptionService;
     }
 
     @PostMapping("/signup")
@@ -50,6 +56,7 @@ public class AuthController {
 
         User savedUser = userRepo.save(createdUser);
 
+        Subscription subscription = subscriptionService.createSubscription(savedUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

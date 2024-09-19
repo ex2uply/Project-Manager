@@ -1,10 +1,10 @@
 package com.projects.spring.projectmanager.controller;
 
 
-import com.projects.spring.projectmanager.Model.Chat;
-import com.projects.spring.projectmanager.Model.Project;
-import com.projects.spring.projectmanager.Model.User;
-import com.projects.spring.projectmanager.response.ApiResponse;
+import com.projects.spring.projectmanager.Model.*;
+import com.projects.spring.projectmanager.repository.InvitationRequest;
+import com.projects.spring.projectmanager.response.MessageResponse;
+import com.projects.spring.projectmanager.service.InvitationService;
 import com.projects.spring.projectmanager.service.ProjectService;
 import com.projects.spring.projectmanager.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -21,9 +21,12 @@ public class ProjectController {
 
     private final UserService userService;
 
-    public ProjectController(ProjectService projectService, UserService userService) {
+    private final InvitationService invitationService;
+
+    public ProjectController(ProjectService projectService, UserService userService, InvitationService invitationService) {
         this.projectService = projectService;
         this.userService = userService;
+        this.invitationService = invitationService;
     }
 
     //get all projects
@@ -54,7 +57,7 @@ public class ProjectController {
     }
 
     //create project
-    @PostMapping()
+    @PostMapping("/create")
     public ResponseEntity<Project> createProject(
             @RequestBody Project project,
             @RequestHeader("Authorization")String jwt
@@ -80,14 +83,14 @@ public class ProjectController {
 
     //delete project
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteProject(
+    public ResponseEntity<MessageResponse> deleteProject(
             @PathVariable("id")Long projectId,
             @RequestHeader("Authorization")String jwt
     ) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         projectService.deleteProject(projectId,user.getId());
 
-        ApiResponse message = new ApiResponse("Project Deleted");
+        MessageResponse message = new MessageResponse("Project Deleted");
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -114,6 +117,31 @@ public class ProjectController {
         return new ResponseEntity<>(chat, HttpStatus.OK);
     }
 
+    @PostMapping("/invite")
+    public ResponseEntity<MessageResponse> inviteProject(
+            @RequestBody InvitationRequest request,
+            @RequestHeader("Authorization")String jwt
+    ) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+        invitationService.sendInvitation(request.getEmail(),request.getProjectId());
+
+        MessageResponse message = new MessageResponse("User Invitation Sent");
+
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/accept_invitation")
+    public ResponseEntity<Invitation> acceptProject(
+            @RequestParam String token,
+            @RequestHeader("Authorization")String jwt
+    ) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+        Invitation invitation= invitationService.acceptInvitation(token,user.getId());
+        projectService.addUserToProject(invitation.getProjectId(),user.getId());
+
+        return new ResponseEntity<>(invitation, HttpStatus.ACCEPTED);
+    }
 
 
 }
