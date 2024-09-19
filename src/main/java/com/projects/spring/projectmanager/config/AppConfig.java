@@ -43,7 +43,8 @@ public class AppConfig {
                 corsConfiguration.setAllowedOrigins(List.of(
                         "http://localhost:3000",
                         "http://localhost:5173",
-                        "http://localhost:4200"
+                        "http://localhost:4200",
+                        "http://localhost:8081"
                 ));
                 corsConfiguration.setAllowedMethods(List.of("*"));
                 corsConfiguration.setAllowCredentials(true);
