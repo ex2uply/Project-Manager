@@ -21,7 +21,7 @@ public class Issues {
     private String priority;
     private LocalDate dueDate;
 
-    @ElementCollection
+
     private List<String> tags = new ArrayList<>();
 
     @ManyToOne

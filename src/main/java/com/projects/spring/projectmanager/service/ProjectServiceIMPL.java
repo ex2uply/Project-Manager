@@ -7,6 +7,7 @@ import com.projects.spring.projectmanager.repository.ProjectRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,8 +26,10 @@ public class ProjectServiceIMPL implements ProjectService{
     }
 
 
-
-
+    @Override
+    public List<Project> getAllProjects(User user) throws Exception {
+        return repo.findByTeamContainingOrOwner(user,user);
+    }
 
     @Override
     public Project createProject(Project project, User user) throws Exception {
@@ -87,7 +90,7 @@ public class ProjectServiceIMPL implements ProjectService{
             throw new Exception("Project not found");
         }
 
-        if(project.get().getOwner().getId() != userId){
+        if(!Objects.equals(project.get().getOwner().getId(), userId)){
             throw new Exception("You are not the owner of this project");
         }
 
@@ -140,10 +143,14 @@ public class ProjectServiceIMPL implements ProjectService{
 
     }
 
+
+
     @Override
     public List<Project> searchProjects(String keyword, User user) throws Exception {
-        String partialName = "%" + keyword + "%";
-        return repo.findByNameContainingAndTeamContains(partialName,user);
+        if (keyword == null || keyword.isEmpty()) {
+            return repo.findByTeamContainingOrOwner(user, user);
+        }
+        return repo.findByNameContainingAndTeamContaining(keyword, user);
     }
 
 

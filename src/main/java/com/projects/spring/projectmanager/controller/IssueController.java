@@ -4,7 +4,6 @@ import com.projects.spring.projectmanager.Model.IssueDTO;
 import com.projects.spring.projectmanager.Model.Issues;
 import com.projects.spring.projectmanager.Model.User;
 import com.projects.spring.projectmanager.request.IssuesRequest;
-import com.projects.spring.projectmanager.response.AuthResponse;
 import com.projects.spring.projectmanager.response.MessageResponse;
 import com.projects.spring.projectmanager.service.IssueService;
 import com.projects.spring.projectmanager.service.UserService;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/issue")
+@RequestMapping("/api/issues")
 public class IssueController {
 
     final
@@ -33,7 +32,7 @@ public class IssueController {
         return ResponseEntity.ok(issues);
     }
 
-    @RequestMapping("/{projectId}")
+    @RequestMapping("/project/{projectId}")
     public ResponseEntity<List<Issues>> getIssuesByProjectId(@PathVariable Long projectId) throws Exception {
         return ResponseEntity.ok(issueService.getIssuesByProjectId(projectId));
     }
@@ -42,21 +41,26 @@ public class IssueController {
     public ResponseEntity<IssueDTO> createIssue(@RequestBody IssuesRequest issues,
                                                 @RequestHeader("Authorization") String token)
             throws Exception {
+        if(issues.getTitle().isEmpty() || issues.getDescription().isEmpty() || issues.getDueDate() == null) {
+            throw new Exception("Title, Description and Due Date are required");
+        }
+
+
         User tokenUser = userService.findUserProfileByJwt(token);
         User user = userService.findUserById(tokenUser.getId());
 
-        Issues createIssue = issueService.createIssue(issues, user);
+        Issues createIssues = issueService.createIssue(issues, user);
         IssueDTO issueDTO = new IssueDTO();
 
-        issueDTO.setDescription(createIssue.getDescription());
-        issueDTO.setDueDate(createIssue.getDueDate());
-        issueDTO.setId(createIssue.getId());
-        issueDTO.setPriority(createIssue.getPriority());
-        issueDTO.setStatus(createIssue.getStatus());
-        issueDTO.setTitle(createIssue.getTitle());
-        issueDTO.setProject(createIssue.getProject());
-        issueDTO.setAssignee(createIssue.getAssignee());
-        issueDTO.setTags(createIssue.getTags());
+        issueDTO.setDescription(createIssues.getDescription());
+        issueDTO.setDueDate(createIssues.getDueDate());
+        issueDTO.setId(createIssues.getId());
+        issueDTO.setPriority(createIssues.getPriority());
+        issueDTO.setStatus(createIssues.getStatus());
+        issueDTO.setTitle(createIssues.getTitle());
+        issueDTO.setProject(createIssues.getProject());
+        issueDTO.setAssignee(createIssues.getAssignee());
+        issueDTO.setTags(createIssues.getTags());
 
         return ResponseEntity.ok(issueDTO);
 

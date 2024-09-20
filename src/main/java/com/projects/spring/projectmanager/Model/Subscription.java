@@ -15,6 +15,7 @@ public class Subscription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private LocalDate subscriptionStartDate;
     private LocalDate subscriptionEndDate;
     private PlanType planType;

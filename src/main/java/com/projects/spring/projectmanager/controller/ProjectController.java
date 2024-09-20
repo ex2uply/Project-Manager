@@ -9,8 +9,10 @@ import com.projects.spring.projectmanager.service.ProjectService;
 import com.projects.spring.projectmanager.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -36,9 +38,8 @@ public class ProjectController {
             @RequestParam(required = false)String tag,
             @RequestHeader("Authorization")String jwt
     ) throws Exception {
-        User user = userService.findUserProfileByJwt(jwt);         //to find which user is requesting the data the jwt string will contain tokens, finding the user details
-        List<Project> projects = projectService.getProjectByTeam(user,category,tag);
-
+        User user = userService.findUserProfileByJwt(jwt);
+        List<Project> projects = projectService.getAllProjects(user);
 
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
@@ -62,6 +63,7 @@ public class ProjectController {
             @RequestBody Project project,
             @RequestHeader("Authorization")String jwt
     ) throws Exception {
+        project.setStartDate(LocalDate.now());
         User user = userService.findUserProfileByJwt(jwt);
         Project newProject = projectService.createProject(project,user);
 

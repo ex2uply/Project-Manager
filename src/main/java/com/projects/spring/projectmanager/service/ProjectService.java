@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ProjectService {
 
+    List<Project> getAllProjects(User user) throws Exception;
+
     Project createProject(Project project, User user)throws Exception;
 
     List<Project> getProjectByTeam(User user, String category , String tag) throws Exception;
