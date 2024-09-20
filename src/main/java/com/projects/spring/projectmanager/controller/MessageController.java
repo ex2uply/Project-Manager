@@ -4,6 +4,7 @@ package com.projects.spring.projectmanager.controller;
 import com.projects.spring.projectmanager.Model.Chat;
 import com.projects.spring.projectmanager.Model.Message;
 import com.projects.spring.projectmanager.Model.User;
+import com.projects.spring.projectmanager.repository.MessageRepo;
 import com.projects.spring.projectmanager.request.CreateMessageRequest;
 import com.projects.spring.projectmanager.response.MessageResponse;
 import com.projects.spring.projectmanager.service.MessageService;
@@ -25,11 +26,14 @@ public class MessageController {
 
     private final ProjectService projectService;
 
+    private final MessageRepo messageRepo;
 
-    public MessageController(MessageService messageService, UserService userService, ProjectService projectService) {
+
+    public MessageController(MessageService messageService, UserService userService, ProjectService projectService, MessageRepo messageRepo) {
         this.messageService = messageService;
         this.userService = userService;
         this.projectService = projectService;
+        this.messageRepo = messageRepo;
     }
 
 
@@ -44,7 +48,7 @@ public class MessageController {
         }
         Message sentMessage = messageService.sendMessage(request.getSenderId(), request.getProjectId(), request.getContent());
 
-        return ResponseEntity.ok(sentMessage);
+        return ResponseEntity.ok(messageRepo.save( sentMessage));
 
     }
 

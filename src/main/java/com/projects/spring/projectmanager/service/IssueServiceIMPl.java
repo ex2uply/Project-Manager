@@ -10,6 +10,7 @@ import com.projects.spring.projectmanager.request.IssuesRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -50,16 +51,16 @@ public class IssueServiceIMPl implements IssueService{
     @Override
     public Issues createIssue(IssuesRequest issuesRequest, User user) throws Exception {
         Project project = projectService.getProjectById(issuesRequest.getProjectId());
-        Issues issue = new Issues();
+        Issues issues = new Issues();
         //all six instance variables of issue request are set
-        issue.setTitle(issuesRequest.getTitle());
-        issue.setDescription(issuesRequest.getDescription());
-        issue.setStatus(issuesRequest.getStatus());
-        issue.setProject(project);
-        issue.setPriority(issuesRequest.getPriority());
-        issue.setDueDate(issuesRequest.getDueDate());
+        issues.setTitle(issuesRequest.getTitle());
+        issues.setDescription(issuesRequest.getDescription());
+        issues.setStatus(issuesRequest.getStatus());
+        issues.setProject(project);
+        issues.setPriority(issuesRequest.getPriority());
+        issues.setDueDate(issuesRequest.getDueDate());
 
-        return issueRepo.save(issue);
+        return issueRepo.save(issues);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class IssueServiceIMPl implements IssueService{
         if(issue.isEmpty()){
             throw new Exception("No issues found with id: "+id);
         }
-        if(issue.get().getProject().getOwner().getId() != userId){
+        if(!Objects.equals(issue.get().getProject().getOwner().getId(), userId)){
             throw new Exception("You are not authorized to delete this issue");
         }
         issueRepo.deleteById(id);
